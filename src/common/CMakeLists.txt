@@ -26,7 +26,6 @@ list(APPEND CLOUDSC_COMMON_SOURCES
   module/file_io_mod.F90
   module/expand_mod.F90
   module/validate_mod.F90
-  module/field_module.F90
   module/cloudsc_global_state_mod.F90
   module/cloudsc_field_state_mod.F90
   module/cloudsc_mpi_mod.F90
@@ -37,7 +36,10 @@ ecbuild_add_library( TARGET cloudsc-common-lib
   SOURCES ${CLOUDSC_COMMON_SOURCES}
   TYPE SHARED
   DEFINITIONS ${CLOUDSC_DEFINITIONS}
+  PUBLIC_LIBS field-api
 )
+
+target_include_directories( cloudsc-common-lib PUBLIC ${CMAKE_BINARY_DIR}/modules)
 target_include_directories( cloudsc-common-lib PUBLIC $<INSTALL_INTERFACE:include> )
 target_include_directories( cloudsc-common-lib PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
 target_include_directories( cloudsc-common-lib PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/module>)
@@ -78,7 +80,9 @@ if( HAVE_ACC )
     SOURCES ${CLOUDSC_COMMON_SOURCES}
     TYPE STATIC
     DEFINITIONS ${CLOUDSC_DEFINITIONS}
+    PUBLIC_LIBS field-api
   )
+  target_include_directories( cloudsc-common-lib-static PUBLIC ${CMAKE_BINARY_DIR}/modules)
   target_include_directories( cloudsc-common-lib-static PUBLIC $<INSTALL_INTERFACE:include> )
   target_include_directories( cloudsc-common-lib-static PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>)
   target_include_directories( cloudsc-common-lib-static PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/module>)
