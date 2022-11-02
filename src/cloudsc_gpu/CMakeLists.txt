@@ -167,6 +167,68 @@ if( HAVE_CLOUDSC_GPU_SCC_CUF )
         WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/../../..
         OMP 1
     )
+
+
+    #####################
+
+    cloudsc_add_compile_options(
+        SOURCES cloudsc_gpu_scc_cuf_device_allocate_mod.F90  cloudsc_driver_gpu_scc_cuf_device_allocate_mod.F90
+        FLAGS   "-Mcuda=maxregcount:128")
+
+    ecbuild_add_executable(
+        TARGET dwarf-cloudsc-gpu-scc-cuf-device-allocate
+        SOURCES
+            dwarf_cloudsc_gpu.F90
+	    cloudsc_driver_gpu_scc_cuf_device_allocate_mod.F90
+	    cloudsc_gpu_scc_cuf_device_allocate_mod.F90
+	    nlev_mod.F90
+        LIBS
+            cloudsc-common-lib
+        DEFINITIONS ${CLOUDSC_DEFINITIONS} CLOUDSC_GPU_SCC_CUF_DEVICE_ALLOCATE
+    )
+
+    # Small hack around the fact that CMake does not understand
+    # CUDA-Fortran natively yet. So we simply force linking here.
+    target_link_options(dwarf-cloudsc-gpu-scc-cuf-device-allocate PUBLIC "-Mcuda")
+
+    ecbuild_add_test(
+        TARGET dwarf-cloudsc-gpu-scc-cuf-device-allocate-serial
+        COMMAND bin/dwarf-cloudsc-gpu-scc-cuf-device-allocate
+        ARGS 1 1000 128
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/../../..
+        OMP 1
+    )
+
+    #####################
+
+    cloudsc_add_compile_options(
+        SOURCES cloudsc_gpu_scc_cuf_host_allocate_mod.F90  cloudsc_driver_gpu_scc_cuf_host_allocate_mod.F90
+        FLAGS   "-Mcuda=maxregcount:128")
+
+    ecbuild_add_executable(
+        TARGET dwarf-cloudsc-gpu-scc-cuf-host-allocate
+        SOURCES
+            dwarf_cloudsc_gpu.F90
+	    cloudsc_driver_gpu_scc_cuf_host_allocate_mod.F90
+	    cloudsc_gpu_scc_cuf_host_allocate_mod.F90
+	    nlev_mod.F90
+        LIBS
+            cloudsc-common-lib
+        DEFINITIONS ${CLOUDSC_DEFINITIONS} CLOUDSC_GPU_SCC_CUF_HOST_ALLOCATE
+    )
+
+    # Small hack around the fact that CMake does not understand
+    # CUDA-Fortran natively yet. So we simply force linking here.
+    target_link_options(dwarf-cloudsc-gpu-scc-cuf-host-allocate PUBLIC "-Mcuda")
+
+    ecbuild_add_test(
+        TARGET dwarf-cloudsc-gpu-scc-cuf-host-allocate-serial
+        COMMAND bin/dwarf-cloudsc-gpu-scc-cuf-host-allocate
+        ARGS 1 1000 128
+        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}/../../..
+        OMP 1
+    )
+
 endif()
 
 
